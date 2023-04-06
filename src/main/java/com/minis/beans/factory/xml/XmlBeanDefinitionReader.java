@@ -9,7 +9,6 @@ import com.minis.core.Resource;
 import com.minis.core.SimpleBeanFactory;
 import org.dom4j.Element;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class XmlBeanDefinitionReader {
@@ -27,42 +26,54 @@ public class XmlBeanDefinitionReader {
             String beanClassName = element.attributeValue("class");
             BeanDefinition beanDefinition = new BeanDefinition(beanID, beanClassName);
 
-            List<Element> propertyElements = element.elements("property");
-            List<String> refs = new ArrayList<>();
-            PropertyValues pvs = new PropertyValues();
-            for (Element propElement : propertyElements) {
-                String pType = propElement.attributeValue("type");
-                String pName = propElement.attributeValue("name");
-                String pValue = propElement.attributeValue("value");
-                String pRef = propElement.attributeValue("ref");
-                String pV = "";
-                boolean isRef = false;
-                if (pValue != null && !pValue.equals("")) {
-                    isRef = false;
-                    pV = pValue;
-                } else if (pRef != null && !pRef.equals("")) {
-                    isRef = true;
-                    pV = pRef;
-                    refs.add(pRef);
-                }
-                pvs.addPropertyValue(new PropertyValue(pType, pName, pValue, isRef));
-            }
+            PropertyValues pvs = getPropertyValues(element);
             beanDefinition.setPropertyValues(pvs);
-            String[] refArray = refs.toArray(new String[0]);
-            beanDefinition.setDependsOn(refArray);
 
-            List<Element> constructorArgElements = element.elements("constructor-arg");
-            ArgumentValues argumentValues = new ArgumentValues();
-            for (Element argElement : constructorArgElements) {
-                String pType = argElement.attributeValue("type");
-                String pName = argElement.attributeValue("name");
-                String pValue = argElement.attributeValue("value");
-                argumentValues.addArgumentValue(new ArgumentValue(pValue, pType, pName));
-            }
+            String[] refs = pvs.getPropertyValueList().stream()
+                    .filter(PropertyValue::isRef)
+                    .map(i -> (String) i.getValue())
+                    .toArray(String[]::new);
+            beanDefinition.setDependsOn(refs);
+
+            ArgumentValues argumentValues = getArgumentValues(element);
             beanDefinition.setConstructorArgumentValues(argumentValues);
 
             this.simpleBeanFactory.registerBean(beanDefinition);
         }
+    }
+
+    private ArgumentValues getArgumentValues(Element element) {
+        List<Element> constructorArgElements = element.elements("constructor-arg");
+        ArgumentValues argumentValues = new ArgumentValues();
+        for (Element ele : constructorArgElements) {
+            String type = ele.attributeValue("type");
+            String name = ele.attributeValue("name");
+            String value = ele.attributeValue("value");
+            argumentValues.addArgumentValue(new ArgumentValue(value, type, name));
+        }
+        return argumentValues;
+    }
+
+    private PropertyValues getPropertyValues(Element element) {
+        List<Element> propertyElements = element.elements("property");
+        PropertyValues pvs = new PropertyValues();
+        for (Element ele : propertyElements) {
+            String type = ele.attributeValue("type");
+            String name = ele.attributeValue("name");
+            String value = ele.attributeValue("value");
+            String ref = ele.attributeValue("ref");
+            String actualValue = "";
+            boolean isRef = false;
+            if (value != null && !value.equals("")) {
+                isRef = false;
+                actualValue = value;
+            } else if (ref != null && !ref.equals("")) {
+                isRef = true;
+                actualValue = ref;
+            }
+            pvs.addPropertyValue(new PropertyValue(type, name, actualValue, isRef));
+        }
+        return pvs;
     }
 
 }
