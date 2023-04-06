@@ -43,8 +43,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                         // singleton = Class.forName(beanDefinition.getClassName()).newInstance();
                         singleton = createBean(beanDefinition);
                     } catch (Exception ex) {
-                        // TODO
-                        System.out.println("error");
+                        ex.printStackTrace();
                     }
                     //注册Bean实例
                     this.registerSingleton(beanDefinition.getId(), singleton);
@@ -59,7 +58,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         try {
             clz = Class.forName(beanDefinition.getClassName());
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
         Object obj = null;
         try {
@@ -67,7 +66,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             this.earlySingletonObjects.put(beanDefinition.getId(), obj);
             handleProperties(beanDefinition, clz, obj);
         } catch (Exception ex) {
-            System.out.println("error");
+            ex.printStackTrace();
         }
         return obj;
     }
@@ -101,14 +100,12 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 Constructor<?> con = clz.getConstructor(paramTypes);
                 obj = con.newInstance(paramValues);
             } catch (Exception ex) {
-                throw new RuntimeException(ex.getMessage());
+                ex.printStackTrace();
             }
         } else { // 如果没有参数，直接创建实例
             try {
                 obj = clz.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -146,7 +143,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                         paramTypes[0] = Class.forName(pType);
                         paramValues[0] = getBean((String) pValue);
                     } catch (Exception ex) {
-
+                        ex.printStackTrace();
                     }
                 }
 
@@ -154,12 +151,12 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 //按照setXxxx规范查找setter方法，调用setter方法设置属性
                 String methodName = "set" + pName.substring(0, 1).toUpperCase()
                         + pName.substring(1);
-                Method method = null;
+                Method method;
                 try {
                     method = clz.getMethod(methodName, paramTypes);
                     method.invoke(obj, paramValues);
                 } catch (Exception ex) {
-                    System.out.println("error");
+                    ex.printStackTrace();
                 }
             }
         }
@@ -169,13 +166,13 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     public void registerBean(BeanDefinition beanDefinition) {
         beanDefinitionMap.put(beanDefinition.getId(), beanDefinition);
         this.beanDefinitionNames.add(beanDefinition.getId());
-        if (!beanDefinition.isLazyInit()) {
-            try {
-                getBean(beanDefinition.getId());
-            } catch (BeansException ignore) {
-
-            }
-        }
+//        if (!beanDefinition.isLazyInit()) {
+//            try {
+//                getBean(beanDefinition.getId());
+//            } catch (BeansException ex) {
+//                ex.printStackTrace();
+//            }
+//        }
     }
 
 
@@ -184,7 +181,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             try {
                 getBean(beanName);
             } catch (Exception ex) {
-
+                ex.printStackTrace();
             }
         }
     }
