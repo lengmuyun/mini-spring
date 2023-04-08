@@ -1,16 +1,17 @@
 package com.minis.context;
 
-import com.minis.beans.factory.config.BeanDefinition;
-import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.BeansException;
-import com.minis.core.Resource;
-import com.minis.core.ClassPathXmlResource;
-import com.minis.core.SimpleBeanFactory;
+import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.annotation.AutowireCapableBeanFactory;
+import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
+import com.minis.core.ClassPathXmlResource;
+import com.minis.core.Resource;
 
 public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
 
-    private final BeanFactory beanFactory;
+    private final AutowireCapableBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
         this(fileName, true);
@@ -18,7 +19,7 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
 
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         Resource resource = new ClassPathXmlResource(fileName);
-        SimpleBeanFactory beanFactory = new SimpleBeanFactory();
+        AutowireCapableBeanFactory beanFactory = new AutowireCapableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
         reader.loadBeanDefinitions(resource);
         this.beanFactory = beanFactory;
@@ -69,7 +70,16 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
 
     @Override
     public void refresh() {
+        registerBeanPostProcessors(this.beanFactory);
+        onRefresh();
+    }
 
+    private void onRefresh() {
+        this.beanFactory.refresh();
+    }
+
+    private void registerBeanPostProcessors(AutowireCapableBeanFactory beanFactory) {
+        beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
     }
 
 }

@@ -2,21 +2,21 @@ package com.minis.beans.factory.xml;
 
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
-import com.minis.beans.factory.config.ArgumentValue;
-import com.minis.beans.factory.config.ArgumentValues;
+import com.minis.beans.factory.annotation.AutowireCapableBeanFactory;
+import com.minis.beans.factory.config.ConstructorArgumentValue;
+import com.minis.beans.factory.config.ConstructorArgumentValues;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.core.Resource;
-import com.minis.core.SimpleBeanFactory;
 import org.dom4j.Element;
 
 import java.util.List;
 
 public class XmlBeanDefinitionReader {
 
-    private final SimpleBeanFactory simpleBeanFactory;
+    private final AutowireCapableBeanFactory beanFactory;
 
-    public XmlBeanDefinitionReader(SimpleBeanFactory beanFactory) {
-        this.simpleBeanFactory = beanFactory;
+    public XmlBeanDefinitionReader(AutowireCapableBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
     }
 
     public void loadBeanDefinitions(Resource resource) {
@@ -35,21 +35,21 @@ public class XmlBeanDefinitionReader {
                     .toArray(String[]::new);
             beanDefinition.setDependsOn(refs);
 
-            ArgumentValues argumentValues = getArgumentValues(element);
+            ConstructorArgumentValues argumentValues = getArgumentValues(element);
             beanDefinition.setConstructorArgumentValues(argumentValues);
 
-            this.simpleBeanFactory.registerBean(beanDefinition);
+            this.beanFactory.registerBean(beanDefinition);
         }
     }
 
-    private ArgumentValues getArgumentValues(Element element) {
+    private ConstructorArgumentValues getArgumentValues(Element element) {
         List<Element> constructorArgElements = element.elements("constructor-arg");
-        ArgumentValues argumentValues = new ArgumentValues();
+        ConstructorArgumentValues argumentValues = new ConstructorArgumentValues();
         for (Element ele : constructorArgElements) {
             String type = ele.attributeValue("type");
             String name = ele.attributeValue("name");
             String value = ele.attributeValue("value");
-            argumentValues.addArgumentValue(new ArgumentValue(value, type, name));
+            argumentValues.addArgumentValue(new ConstructorArgumentValue(value, type, name));
         }
         return argumentValues;
     }
