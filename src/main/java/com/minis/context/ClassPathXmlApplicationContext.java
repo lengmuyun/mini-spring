@@ -2,7 +2,7 @@ package com.minis.context;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
-import com.minis.beans.factory.annotation.AutowireCapableBeanFactory;
+import com.minis.beans.factory.annotation.AbstractAutowireCapableBeanFactory;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
@@ -11,7 +11,7 @@ import com.minis.core.Resource;
 
 public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
 
-    private final AutowireCapableBeanFactory beanFactory;
+    private final AbstractAutowireCapableBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
         this(fileName, true);
@@ -19,7 +19,7 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
 
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         Resource resource = new ClassPathXmlResource(fileName);
-        AutowireCapableBeanFactory beanFactory = new AutowireCapableBeanFactory();
+        AbstractAutowireCapableBeanFactory beanFactory = new AbstractAutowireCapableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
         reader.loadBeanDefinitions(resource);
         this.beanFactory = beanFactory;
@@ -78,8 +78,13 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
         this.beanFactory.refresh();
     }
 
-    private void registerBeanPostProcessors(AutowireCapableBeanFactory beanFactory) {
+    private void registerBeanPostProcessors(AbstractAutowireCapableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+    }
+
+    @Override
+    public void addApplicationListener(ApplicationListener listener) {
+
     }
 
 }

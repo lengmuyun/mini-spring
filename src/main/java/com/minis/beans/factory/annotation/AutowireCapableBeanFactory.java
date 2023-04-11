@@ -1,57 +1,16 @@
 package com.minis.beans.factory.annotation;
 
 import com.minis.beans.BeansException;
-import com.minis.beans.factory.config.BeanDefinition;
-import com.minis.beans.factory.support.AbstractBeanFactory;
+import com.minis.beans.factory.BeanFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface AutowireCapableBeanFactory extends BeanFactory {
 
-public class AutowireCapableBeanFactory extends AbstractBeanFactory {
+    int AUTOWIRE_NO = 0;
+    int AUTOWIRE_BY_NAME = 1;
+    int AUTOWIRE_BY_TYPE = 2;
 
-    private final List<AutowiredAnnotationBeanPostProcessor> beanPostProcessors = new ArrayList<>();
+    Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException;
 
-    public void addBeanPostProcessor(AutowiredAnnotationBeanPostProcessor beanPostProcessor) {
-        this.beanPostProcessors.remove(beanPostProcessor);
-        this.beanPostProcessors.add(beanPostProcessor);
-    }
-
-    public int getBeanPostProcessorCount() {
-        return this.beanPostProcessors.size();
-    }
-
-    @Override
-    public Object applyBeanPostProcessorBeforeInitialization(Object singleton, String beanName) {
-        Object result = singleton;
-        for (AutowiredAnnotationBeanPostProcessor beanPostProcessor : this.beanPostProcessors) {
-            beanPostProcessor.setBeanFactory(this);
-            try {
-                result = beanPostProcessor.postProcessBeforeInitialization(singleton, beanName);
-            } catch (BeansException e) {
-                e.printStackTrace();
-            }
-            if (result == null) {
-                return result;
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public Object applyBeanPostProcessorAfterInitialization(Object singleton, String beanName) {
-        Object result = singleton;
-        for (AutowiredAnnotationBeanPostProcessor beanPostProcessor : this.beanPostProcessors) {
-            beanPostProcessor.setBeanFactory(this);
-            try {
-                result = beanPostProcessor.postProcessAfterInitialization(singleton, beanName);
-            } catch (BeansException e) {
-                e.printStackTrace();
-            }
-            if (result == null) {
-                return result;
-            }
-        }
-        return result;
-    }
+    Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException;
 
 }
