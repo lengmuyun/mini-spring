@@ -1,6 +1,7 @@
 package com.minis.beans.factory.annotation;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.factory.config.AbstractAutowireCapableBeanFactory;
 import com.minis.beans.factory.config.BeanPostProcessor;
 
 import java.lang.reflect.Field;

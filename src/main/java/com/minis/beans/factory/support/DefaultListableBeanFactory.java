@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.minis.beans.BeansException;
-import com.minis.beans.factory.annotation.AbstractAutowireCapableBeanFactory;
+import com.minis.beans.factory.config.AbstractAutowireCapableBeanFactory;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.BeanPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
