@@ -5,14 +5,22 @@ import com.minis.beans.factory.annotation.Autowired;
 public class BaseService {
 
     @Autowired
-    private BaseBaseService bbs;
+    private BaseBaseService basebaseservice;
 
-    public BaseBaseService getBbs() {
-        return bbs;
+    public BaseBaseService getBasebaseservice() {
+        return basebaseservice;
     }
 
-    public void setBbs(BaseBaseService bbs) {
-        this.bbs = bbs;
+    public void setBasebaseservice(BaseBaseService basebaseservice) {
+        this.basebaseservice = basebaseservice;
+    }
+
+    public BaseService() {
+    }
+
+    public void sayHello() {
+        System.out.println("Base Service says Hello");
+        basebaseservice.sayHello();
     }
 
 }

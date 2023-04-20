@@ -1,8 +1,11 @@
 package com.minis.beans.factory.config;
 
 public class ConstructorArgumentValue {
+
     private Object value;
+
     private String type;
+
     private String name;
 
     public ConstructorArgumentValue(Object value, String type) {

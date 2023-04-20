@@ -2,12 +2,11 @@ package com.minis.beans.factory.config;
 
 import com.minis.beans.PropertyValues;
 
-import java.util.Objects;
-
 public class BeanDefinition {
 
     String SCOPE_SINGLETON = "singleton";
     String SCOPE_PROTOTYPE = "prototype";
+
     private boolean lazyInit = false;
     private String[] dependsOn;
     private ConstructorArgumentValues constructorArgumentValues;
@@ -96,10 +95,11 @@ public class BeanDefinition {
     }
 
     public boolean isSingleton() {
-        return Objects.equals(this.scope, SCOPE_SINGLETON);
+        return SCOPE_SINGLETON.equals(scope);
     }
 
     public boolean isPrototype() {
-        return Objects.equals(this.scope, SCOPE_PROTOTYPE);
+        return SCOPE_PROTOTYPE.equals(scope);
     }
+
 }

@@ -7,7 +7,8 @@ import com.minis.beans.factory.support.AbstractBeanFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
+public class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements
+        AutowireCapableBeanFactory {
 
     private final List<AutowiredAnnotationBeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -20,16 +21,22 @@ public class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory impl
         return this.beanPostProcessors.size();
     }
 
+    public List<AutowiredAnnotationBeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
+
     @Override
-    public Object applyBeanPostProcessorsBeforeInitialization(Object singleton, String beanName) {
-        Object result = singleton;
-        for (AutowiredAnnotationBeanPostProcessor beanPostProcessor : this.beanPostProcessors) {
-            beanPostProcessor.setBeanFactory(this);
-            try {
-                result = beanPostProcessor.postProcessBeforeInitialization(singleton, beanName);
-            } catch (BeansException e) {
-                e.printStackTrace();
-            }
+    public void registerBeanDefinition(BeanDefinition beanDefinition) {
+        registerBeanDefinition(beanDefinition.getId(), beanDefinition);
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (AutowiredAnnotationBeanPostProcessor beanProcessor :
+                getBeanPostProcessors()) {
+            beanProcessor.setBeanFactory(this);
+            result = beanProcessor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
                 return result;
             }
@@ -38,15 +45,10 @@ public class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory impl
     }
 
     @Override
-    public Object applyBeanPostProcessorsAfterInitialization(Object singleton, String beanName) {
-        Object result = singleton;
-        for (AutowiredAnnotationBeanPostProcessor beanPostProcessor : this.beanPostProcessors) {
-            beanPostProcessor.setBeanFactory(this);
-            try {
-                result = beanPostProcessor.postProcessAfterInitialization(singleton, beanName);
-            } catch (BeansException e) {
-                e.printStackTrace();
-            }
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result = beanProcessor.postProcessAfterInitialization(result, beanName);
             if (result == null) {
                 return result;
             }

@@ -15,10 +15,12 @@ public interface BeanFactory {
 
     Class<?> getType(String name);
 
+    void registerBeanDefinition(BeanDefinition beanDefinition);
+
+    /**
+     * 将方法 {@link BeanFactory#registerBeanDefinition(BeanDefinition)} 重命名为该方法，并调整参数
+     * (好像有问题)
+     */
     void registerBean(String beanName, Object obj);
-
-    void registerBean(BeanDefinition beanDefinition);
-
-    void refresh();
 
 }

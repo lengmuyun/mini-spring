@@ -1,6 +1,7 @@
 package com.minis.test;
 
 public class BaseBaseService {
+
     private AServiceImpl as;
 
     public AServiceImpl getAs() {
@@ -9,6 +10,10 @@ public class BaseBaseService {
 
     public void setAs(AServiceImpl as) {
         this.as = as;
+    }
+
+    public void sayHello() {
+        System.out.println("Base Base Service says hello");
     }
 
 }
