@@ -1,5 +1,7 @@
 package com.minis.web;
 
+import com.minis.context.WebApplicationContext;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,18 +21,20 @@ import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
-
     private List<String> packageNames = new ArrayList<>();
-    private Map<String,Object> controllerObjs = new HashMap<>();
+    private Map<String, Object> controllerObjs = new HashMap<>();
     private List<String> controllerNames = new ArrayList<>();
-    private Map<String,Class<?>> controllerClasses = new HashMap<>();
+    private Map<String, Class<?>> controllerClasses = new HashMap<>();
     private List<String> urlMappingNames = new ArrayList<>();
-    private Map<String,Object> mappingObjs = new HashMap<>();
-    private Map<String,Method> mappingMethods = new HashMap<>();
+    private Map<String, Object> mappingObjs = new HashMap<>();
+    private Map<String, Method> mappingMethods = new HashMap<>();
+
+    private WebApplicationContext webApplicationContext;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+        this.webApplicationContext = (WebApplicationContext) this.getServletContext()
+                .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         String contextConfigLocation = config.getInitParameter("contextConfigLocation");
         URL xmlPath = null;
         try {
@@ -109,11 +113,11 @@ public class DispatcherServlet extends HttpServlet {
         File dir = new File(uri);
         //处理对应的文件目录
         for (File file : dir.listFiles()) { //目录下的文件或者子目录
-            if(file.isDirectory()){ //对子目录递归扫描
-                scanPackage(packageName+"."+file.getName());
-            }else{ //类文件
-                String controllerName = packageName +"."
-                        +file.getName().replace(".class", "");
+            if (file.isDirectory()) { //对子目录递归扫描
+                scanPackage(packageName + "." + file.getName());
+            } else { //类文件
+                String controllerName = packageName + "."
+                        + file.getName().replace(".class", "");
                 tempControllerNames.add(controllerName);
             }
         }
