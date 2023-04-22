@@ -17,9 +17,17 @@ public class ClassPathXmlResource implements Resource {
     private Iterator<Element> elementIterator;
 
     public ClassPathXmlResource(String fileName) {
-        SAXReader saxReader = new SAXReader();
         URL xmlPath = this.getClass().getClassLoader().getResource(fileName);
+        load(xmlPath);
+    }
+
+    public ClassPathXmlResource(URL url) {
+        load(url);
+    }
+
+    private void load(URL xmlPath) {
         try {
+            SAXReader saxReader = new SAXReader();
             document = saxReader.read(xmlPath);
             rootElement = document.getRootElement();
             elementIterator = rootElement.elementIterator();
