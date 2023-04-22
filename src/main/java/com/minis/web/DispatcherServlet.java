@@ -33,8 +33,8 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        this.webApplicationContext = (WebApplicationContext) this.getServletContext()
-                .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        super.init(config);
+        this.webApplicationContext = (WebApplicationContext) this.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         String contextConfigLocation = config.getInitParameter("contextConfigLocation");
         URL xmlPath = null;
         try {
