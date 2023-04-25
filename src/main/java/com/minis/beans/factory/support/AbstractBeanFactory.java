@@ -158,7 +158,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
             // handle constructor
             ConstructorArgumentValues constructorArgumentValues =
                     beanDefinition.getConstructorArgumentValues();
-            if (!constructorArgumentValues.isEmpty()) {
+            if (constructorArgumentValues != null && !constructorArgumentValues.isEmpty()) {
                 Class<?>[] paramTypes = new Class<?>
                         [constructorArgumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
@@ -207,7 +207,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
                 beanDefinition.getId());
         PropertyValues propertyValues = beanDefinition.getPropertyValues();
         //如果有属性
-        if (!propertyValues.isEmpty()) {
+        if (propertyValues != null && !propertyValues.isEmpty()) {
             for (int i = 0; i < propertyValues.size(); i++) {
                 PropertyValue propertyValue =
                         propertyValues.getPropertyValueList().get(i);
