@@ -2,6 +2,7 @@ package com.minis.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PropertyValues {
 
@@ -10,6 +11,12 @@ public class PropertyValues {
     public PropertyValues() {
         this.propertyValueList = new ArrayList<>(0);
     }
+
+    public PropertyValues(Map<String, Object> map) {
+        // TODO
+        this.propertyValueList = new ArrayList<>(0);
+    }
+
 
     public List<PropertyValue> getPropertyValueList() {
         return this.propertyValueList;
