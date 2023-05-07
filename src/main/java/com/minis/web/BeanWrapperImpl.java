@@ -39,8 +39,10 @@ public class BeanWrapperImpl extends PropertyEditorRegistrySupport {
     public void setPropertyValue(PropertyValue pv) {
         //拿到参数处理器
         BeanPropertyHandler propertyHandler = new BeanPropertyHandler(pv.getName());
-        //找到对该参数类型的editor
-        PropertyEditor pe = this.getDefaultEditor(propertyHandler.getPropertyClz());
+        PropertyEditor pe = this.getCustomEditor(propertyHandler.getPropertyClz());
+        if (pe == null) {
+            pe = this.getDefaultEditor(propertyHandler.getPropertyClz());
+        }
         //设置参数值
         pe.setAsText((String) pv.getValue());
         propertyHandler.setValue(pe.getValue());
@@ -64,7 +66,7 @@ public class BeanWrapperImpl extends PropertyEditorRegistrySupport {
                         propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), propertyClz);
                 //获取读属性的方法，按照约定为getXxxx（）
                 this.readMethod = clz.getDeclaredMethod("get" +
-                        propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), propertyClz);
+                        propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1));
             } catch (Exception e) {
                 e.printStackTrace();
             }

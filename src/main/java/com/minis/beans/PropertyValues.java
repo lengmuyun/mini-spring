@@ -13,8 +13,11 @@ public class PropertyValues {
     }
 
     public PropertyValues(Map<String, Object> map) {
-        // TODO
-        this.propertyValueList = new ArrayList<>(0);
+        this.propertyValueList = new ArrayList<>(10);
+        for (Map.Entry<String,Object> e: map.entrySet()) {
+            PropertyValue pv = new PropertyValue(e.getKey(),e.getValue());
+            this.propertyValueList.add(pv);
+        }
     }
 
 

@@ -49,7 +49,7 @@ public class PropertyEditorRegistrySupport {
         return (elementType != null && this.customEditors != null && this.customEditors.containsKey(elementType));
     }
     //获取客户化转换器
-    private PropertyEditor getCustomEditor(Class<?> requiredType) {
+    public PropertyEditor getCustomEditor(Class<?> requiredType) {
         if (requiredType == null || this.customEditors == null) {
             return null;
         }

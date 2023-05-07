@@ -48,6 +48,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
                 //如果连毛胚都没有，则创建bean实例并注册
                 System.out.println("get bean null -------------- " + beanName);
                 BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+                if (beanDefinition == null) {
+                    return null;
+                }
                 singleton = createBean(beanDefinition);
                 this.registerBean(beanName, singleton);
                 // 进行beanpostprocessor处理

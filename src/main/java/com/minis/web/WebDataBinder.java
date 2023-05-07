@@ -1,5 +1,6 @@
 package com.minis.web;
 
+import com.minis.beans.PropertyEditor;
 import com.minis.beans.PropertyValues;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ public class WebDataBinder {
     private Object target;
     private Class<?> clz;
     private String objectName;
+    BeanWrapperImpl propertyAccessor;
 
     public WebDataBinder(Object target) {
         this(target, "");
@@ -18,6 +20,7 @@ public class WebDataBinder {
         this.target = target;
         this.objectName = targetName;
         this.clz = target.getClass();
+        this.propertyAccessor = new BeanWrapperImpl(this.target);
     }
 
     // 核心绑定方法, 将request里面的参数值绑定到目标对象的属性上
@@ -38,7 +41,11 @@ public class WebDataBinder {
 
     // 设置属性值的工具
     private BeanWrapperImpl getPropertyAccessor() {
-        return new BeanWrapperImpl(this.target);
+        return this.propertyAccessor;
+    }
+
+    public void registerCustomEditor(Class<?> requiredType, PropertyEditor propertyEditor) {
+        getPropertyAccessor().registerCustomEditor(requiredType, propertyEditor);
     }
 
     private PropertyValues assignParameters(HttpServletRequest request) {
