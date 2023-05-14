@@ -21,6 +21,9 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
     private WebBindingInitializer webBindingInitializer;
     private HttpMessageConverter messageConverter;
 
+    public RequestMappingHandlerAdapter() {
+    }
+
     public RequestMappingHandlerAdapter(WebApplicationContext wac) {
         this.wac = wac;
         try {
@@ -28,6 +31,14 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter {
         } catch (BeansException e) {
             e.printStackTrace();
         }
+    }
+
+    public HttpMessageConverter getMessageConverter() {
+        return messageConverter;
+    }
+
+    public void setMessageConverter(HttpMessageConverter messageConverter) {
+        this.messageConverter = messageConverter;
     }
 
     @Override
