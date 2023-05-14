@@ -5,6 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface HandlerAdapter {
 
-    void handle(HttpServletRequest request, HttpServletResponse response, Object handler);
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler);
 
 }

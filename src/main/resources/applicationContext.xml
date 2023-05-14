@@ -13,6 +13,24 @@
     <bean id="baseservice" class="com.minis.test.BaseService">
     </bean>
 
-    <bean id="webBindingInitializer" class="com.minis.test.DateInitializer">
+    <bean id="handlerAdapter" class="com.minis.web.servlet.RequestMappingHandlerAdapter">
+        <property type="com.minis.web.HttpMessageConverter" name="messageConverter" ref="messageConverter"/>
+        <property type="com.minis.web.WebBindingInitializer" name="webBindingInitializer" ref="webBindingInitializer"/>
+    </bean>
+
+    <bean id="webBindingInitializer" class="com.test.DateInitializer" />
+
+    <bean id="messageConverter" class="com.minis.web.DefaultHttpMessageConverter">
+        <property type="com.minis.web.ObjectMapper" name="objectMapper" ref="objectMapper"/>
+    </bean>
+    <bean id="objectMapper" class="com.minis.web.DefaultObjectMapper" >
+        <property type="String" name="dateFormat" value="yyyy/MM/dd"/>
+        <property type="String" name="decimalFormat" value="###.##"/>
+    </bean>
+
+    <bean id="viewResolver" class="com.minis.web.servlet.view.InternalResourceViewResolver" >
+        <property type="String" name="viewClassName" value="com.minis.web.servlet.view.JstlView" />
+        <property type="String" name="prefix" value="/jsp/" />
+        <property type="String" name="suffix" value=".jsp" />
     </bean>
 </beans>

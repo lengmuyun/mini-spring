@@ -1,11 +1,14 @@
 package com.minis.web;
 
+import com.minis.beans.BeansException;
 import com.minis.beans.factory.support.AnnotationConfigWebApplicationContext;
 import com.minis.context.WebApplicationContext;
 import com.minis.web.servlet.HandlerAdapter;
 import com.minis.web.servlet.HandlerMethod;
+import com.minis.web.servlet.ModelAndView;
 import com.minis.web.servlet.RequestMappingHandlerAdapter;
 import com.minis.web.servlet.RequestMappingHandlerMapping;
+import com.minis.web.servlet.View;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -39,7 +42,9 @@ public class DispatcherServlet extends HttpServlet {
     private WebApplicationContext webApplicationContext;
     private WebApplicationContext parentApplicationContext;
     private RequestMappingHandlerMapping handlerMapping;
-    private RequestMappingHandlerAdapter handlerAdapter;
+    private HandlerAdapter handlerAdapter;
+
+    public static final String HANDLER_ADAPTER_BEAN_NAME = "handlerAdapter";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -66,7 +71,11 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void initHandlerAdapters(WebApplicationContext wac) {
-        this.handlerAdapter = new RequestMappingHandlerAdapter(wac);
+        try {
+            this.handlerAdapter = (HandlerAdapter) wac.getBean(HANDLER_ADAPTER_BEAN_NAME);
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initHandlerMappings(WebApplicationContext wac) {
@@ -93,7 +102,29 @@ public class DispatcherServlet extends HttpServlet {
             return;
         }
         HandlerAdapter ha = this.handlerAdapter;
-        ha.handle(processedRequest, resp, handlerMethod);
+        ModelAndView mv = ha.handle(processedRequest, resp, handlerMethod);
+        try {
+            render(processedRequest, resp, mv);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void render(HttpServletRequest request, HttpServletResponse response, ModelAndView mv) throws Exception {
+        if (mv == null) {
+            response.getWriter().flush();
+            response.getWriter().close();
+            return;
+        }
+
+        String sTarget = mv.getViewName();
+        Map<String, Object> modelMap = mv.getModel();
+        View view = resolveViewName(sTarget, modelMap, request);
+        view.render(modelMap, request, response);
+    }
+
+    private View resolveViewName(String sTarget, Map<String, Object> modelMap, HttpServletRequest request) {
+        return null;
     }
 
     private void initController() {
